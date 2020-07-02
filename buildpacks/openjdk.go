@@ -100,10 +100,17 @@ func (bt JavaBuildTool) JavaDir() string {
 	opsys := OS()
 	// Versions..
 	archiveDir := ""
+	
+	subVersionWhole := bt.subVersion
+	p := strings.Split(bt.subVersion, ".")
+	if len(p) == 2 {
+		subVersionWhole = p[0]
+	}
+	
 	if bt.majorVersion == 8 {
 		archiveDir = fmt.Sprintf("jdk%du%d-b%s", bt.majorVersion, bt.minorVersion, bt.subVersion)
 	} else {
-		archiveDir = fmt.Sprintf("jdk-%d.%d.%d+%s", bt.majorVersion, bt.minorVersion, bt.patchVersion, bt.subVersion)
+		archiveDir = fmt.Sprintf("jdk-%d.%d.%d+%s", bt.majorVersion, bt.minorVersion, bt.patchVersion, subVersionWhole)
 	}
 
 	basePath := filepath.Join(bt.InstallDir(), archiveDir)
