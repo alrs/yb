@@ -137,7 +137,7 @@ func (bt JavaBuildTool) DownloadUrl() string {
 		urlPattern = "https://github.com/AdoptOpenJDK/openjdk{{.MajorVersion}}-binaries/releases/download/jdk{{.MajorVersion}}u{{.MinorVersion}}-b{{.SubVersion}}/OpenJDK{{.MajorVersion}}U-jdk_{{.Arch}}_{{.OS}}_hotspot_{{.MajorVersion}}u{{.MinorVersion}}b{{.SubVersion}}.{{.Extension}}"
 	} else {
 		if bt.majorVersion < 14 {
-			urlPattern = "https://github.com/AdoptOpenJDK/openjdk{{ .MajorVersion }}-binaries/releases/download/jdk-{{ .MajorVersion }}.{{ .MinorVersion }}.{{ .PatchVersion }}%2B{{ .SubVersion }}/OpenJDK{{ .MajorVersion }}U-jdk_x64_linux_hotspot_{{ .MajorVersion }}.{{ .MinorVersion }}.{{ .PatchVersion }}_{{ .SubVersion }}.{{ .Extension }}"
+			urlPattern = "https://github.com/AdoptOpenJDK/openjdk{{ .MajorVersion }}-binaries/releases/download/jdk-{{ .MajorVersion }}.{{ .MinorVersion }}.{{ .PatchVersion }}%2B{{ .SubVersion }}/OpenJDK{{ .MajorVersion }}U-jdk_x64_linux_hotspot_{{ .MajorVersion }}.{{ .MinorVersion }}.{{ .PatchVersion }}_{{ .SubVersionWhole }}.{{ .Extension }}"
 		} else {
 			// 14: https://github.com/AdoptOpenJDK/openjdk14-binaries/releases/download/jdk-14%2B36/OpenJDK14U-jdk_aarch64_linux_hotspot_14_36.tar.gz
 			urlPattern = "https://github.com/AdoptOpenJDK/openjdk{{ .MajorVersion }}-binaries/releases/download/jdk-{{ .MajorVersion }}%2B{{ .SubVersion }}/OpenJDK{{ .MajorVersion }}U-jdk_x64_linux_hotspot_{{ .MajorVersion }}_{{ .SubVersion }}.{{ .Extension }}"
@@ -156,6 +156,13 @@ func (bt JavaBuildTool) DownloadUrl() string {
 		extension = "zip"
 	}
 
+	subVersionWhole := bt.subVersion
+	p := strings.Split(bt.subVersion, ".")
+	if len(p) == 2 {
+		subVersionWhole = p[0]
+	}
+	
+
 	data := struct {
 		OS           string
 		Arch         string
@@ -163,6 +170,7 @@ func (bt JavaBuildTool) DownloadUrl() string {
 		MinorVersion int64
 		PatchVersion int64
 		SubVersion   string // not always an int, sometimes a float 
+		SubVersionWhole string // Whole part of the sub-version because OpenJDK people?
 		Extension    string
 	}{
 		operatingSystem,
@@ -171,6 +179,7 @@ func (bt JavaBuildTool) DownloadUrl() string {
 		bt.minorVersion,
 		bt.patchVersion,
 		bt.subVersion,
+		subVersionWhole,
 		extension,
 	}
 
