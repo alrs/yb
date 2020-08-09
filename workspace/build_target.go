@@ -72,7 +72,6 @@ func (bt BuildTarget) EnvironmentVariables(data runtime.RuntimeEnvironmentData) 
 func (bt BuildTarget) Build(ctx context.Context, runtimeCtx *runtime.Runtime, output io.Writer, flags BuildFlags, packagePath string, buildpacks []string) ([]CommandTimer, error) {
 	var stepTimes []CommandTimer
 
-	containers := bt.Dependencies.ContainerList()
 	workDir := packagePath
 	builder := runtimeCtx.DefaultTarget
 
@@ -97,8 +96,6 @@ func (bt BuildTarget) Build(ctx context.Context, runtimeCtx *runtime.Runtime, ou
 		log.Infof("Will mount  %s at %s in container", packagePath, sourceMapDir)
 		mount := fmt.Sprintf("%s:%s", packagePath, sourceMapDir)
 		buildContainer.Mounts = append(buildContainer.Mounts, mount)
-
-		containers = append(containers, buildContainer)
 
 		var err error
 		builder, err = runtimeCtx.AddContainer(ctx, buildContainer)
